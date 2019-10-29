@@ -6,8 +6,8 @@ let app = express();
 let p = [];
 let con = mysql.createConnection({
     host:"localhost",
-    user:"admin",
-    password:"admin",
+    user:"root",
+    password:"fdO0,s7mOgR;",
     database:"db"
 });
 
@@ -38,7 +38,7 @@ app.post("/login",function(request,response){
         let str;
         str = parse(request.body,0,0) + "," +parse(request.body,0,1) + ","+parse(request.body,1,0) + ","+"true";
         console.log(str);
-        let sql = "INSERT INTO Accounts(Users,Password,Ip,Connected) VALUES("+str+")";
+        let sql = "INSERT INTO Accounts(user,password,ip,connected) VALUES("+str+")";
         con.query(sql,function(err){
             if(err) throw err;
             console.log("done");
@@ -51,5 +51,19 @@ app.get("/", function(request, response) {
     response.send(JSON.stringify(p));
     console.log(request.body);
     console.log("master client response sended");
+});
+
+app.get("/mainStart", function(request,response){
+    response.setHeader("Access-Control-Allow-Origin","*");
+    console.log(request.body);
+    con.connect(function(err) {
+        if (err) throw err;
+        con.query("SELECT connected FROM Accounts WHERE ip = '"+response.body+"'", function (err, result) {
+            if (err) throw err;
+            console.log(result);
+            response.send(result);
+        });
+    });
+    console.log("logged in");
 });
 app.listen(8080);
