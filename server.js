@@ -37,14 +37,25 @@ app.post("/login",function(request,response){
     con.connect(function(err){
         if(err) throw err;
         console.log("connected to db");
-        let str;
-        str = parse(request.body,0,0) + "," +parse(request.body,0,1) + ","+parse(request.body,1,0) + ","+"true";
-        console.log(str);
-        let sql = "INSERT INTO Accounts(user,password,ip,connected) VALUES("+str+")";
-        con.query(sql,function(err){
+        let info = [parse(request.body,0,0),parse(request.body,0,1),parse(request.body,1,0),"true"];
+        let sql = "SELECT user,password,ip FROM Accounts WHERE ip ="+info[2]+" AND user = "+info[0]+" AND password = "+info[1];
+        con.query(sql,function(err,result){
             if(err) throw err;
-            console.log("done");
+            console.log(result);
+            if(result != null){
+                response.send("true");
+                return;
+            }else{
+                let str = info[0] + "," + info[1] + "," + info[2] + "," + info[3];
+                console.log(str);
+                sql = "INSERT INTO Accounts(user,password,ip,connected) VALUES("+str+")";
+                con.query(sql,function(err){
+                    if(err) throw err;
+                    console.log("done");
+                });
+            }
         });
+
     });
 });
 
