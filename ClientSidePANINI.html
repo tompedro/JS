@@ -56,7 +56,7 @@
         }
     </style>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-    
+    <div id = "error"><h1>YOU CAN'T REACH SERVER.</h1><h2>Check the connection.</h2></div>
     <div id = "send">
         <h1 class= "title">
                 BENVENUTO!
@@ -78,49 +78,73 @@
         var xmlhttp = new XMLHttpRequest();
         var theUrl = "http://18.222.195.100:8080";
 
-        document.getElementById("send").style.display = "block";
+        document.getElementById("error").style.display = "none";
+        document.getElementById("send").style.display = "none";
         document.getElementById("login").style.display = "none";
 
         $.getJSON('https://api.ipify.org?format=json', function(data){
             ip = data.ip;
-            //see();
+            see();
         });
 
         
         function send(){
-            xmlhttp.open("POST", theUrl,true);
-            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xmlhttp.send(ip + "=" + document.getElementById("order").value);
+            try{
+                xmlhttp.open("POST", theUrl,true);
+                document.getElementById("error").style.display = "none";
+                xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xmlhttp.send(ip + "=" + document.getElementById("order").value);
+            }catch{
+                document.getElementById("send").style.display = "none";
+                document.getElementById("login").style.display = "none";
+                document.getElementById("error").style.display = "block";
+            }
         }
         function register(){
-            xmlhttp.open("POST", theUrl+"/login",true);
-            xmlhttp.onload = function(){
-                if(xmlhttp.response == "true")
-                {
-                    document.getElementById("send").style.display = "block";
-                    document.getElementById("login").style.display = "none";
-                }else{
-                    document.getElementById("send").style.display = "none";
-                    document.getElementById("login").style.display = "block";
+            try{
+                xmlhttp.open("POST", theUrl+"/login",true);
+                xmlhttp.onload = function(){
+                    document.getElementById("error").style.display = "none";
+                    if(xmlhttp.response == "true")
+                    {
+                        document.getElementById("send").style.display = "block";
+                        document.getElementById("login").style.display = "none";
+                    }else{
+                        document.getElementById("send").style.display = "none";
+                        document.getElementById("login").style.display = "block";
+                    }
                 }
+                xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xmlhttp.send(document.getElementById("user").value + "=" + document.getElementById("pwd").value + "&" + ip);
+            }catch{
+                document.getElementById("send").style.display = "none";
+                document.getElementById("login").style.display = "none";
+                document.getElementById("error").style.display = "block";
             }
-            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xmlhttp.send(document.getElementById("user").value + "=" + document.getElementById("pwd").value + "&" + ip);
+            
         }
         function see(){
-            xmlhttp.open("POST", theUrl+"/mainStart",true);
-            xmlhttp.onload = function(){
-                if(xmlhttp.response == "true")
-                {
-                    document.getElementById("send").style.display = "block";
-                    document.getElementById("login").style.display = "none";
-                }else{
-                    document.getElementById("send").style.display = "none";
-                    document.getElementById("login").style.display = "block";
+            try{
+                xmlhttp.open("POST", theUrl+"/mainStart",true);
+                xmlhttp.onload = function(){
+                    document.getElementById("error").style.display = "none";
+                    if(xmlhttp.response == "true")
+                    {
+                        document.getElementById("send").style.display = "block";
+                        document.getElementById("login").style.display = "none";
+                    }else{
+                        document.getElementById("send").style.display = "none";
+                        document.getElementById("login").style.display = "block";
+                    }
                 }
+                xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xmlhttp.send(ip+"=a");
+            }catch{
+                document.getElementById("send").style.display = "none";
+                document.getElementById("login").style.display = "none";
+                document.getElementById("error").style.display = "block";
             }
-            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xmlhttp.send(ip+"=a");
+            
         }
     </script>
     </body>

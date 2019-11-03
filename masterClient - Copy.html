@@ -68,16 +68,23 @@
         <button class = "btn-animate"id="submit" onclick="res()">VIEW ORDERS</button>
     </div>
     <script>
-        document.getElementById("area").value = "Try";
+        document.getElementById("area").value = "...";
         function res(){
-            var xmlhttp = new XMLHttpRequest();
-            var theUrl = "http://18.222.195.100:8080";
-            xmlhttp.open("POST", theUrl +"/master",true);
-            xmlhttp.onload = function(){
-                document.getElementById("area").value = xmlhttp.response;
+            try{
+                var xmlhttp = new XMLHttpRequest();
+                var theUrl = "http://18.222.195.100:8080";
+                xmlhttp.open("POST", theUrl +"/master",true);
+                xmlhttp.onload = function(){
+                    document.getElementById("area").value = xmlhttp.response;
+                }
+                xmlhttp.setRequestHeader("Content-Type", "text/plain");
+                xmlhttp.send(null);
+            }catch{
+                alert("You can't reach the server.");
+                document.getElementsByClassName("title").value = "ERROR";
             }
-            xmlhttp.setRequestHeader("Content-Type", "text/plain");
-            xmlhttp.send(null);
+            
+            
         }
     </script>
     </body>
