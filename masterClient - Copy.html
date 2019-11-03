@@ -1,0 +1,84 @@
+<html>
+    <body style = "background-color:lightgray">
+    <style>
+        .textarea{
+            width: 70%;
+            height: 400px;
+            padding-left: 15px;
+            border: none;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            background: rgba(151, 151, 151, 0.452);
+            text-transform:uppercase;
+            color: black;
+            font-family: Arial, Helvetica, sans-serif;
+            outline: none;
+            font-size : 16px;
+            
+            text-align: left;
+        }
+        ::placeholder{
+            color : rgba(32, 53, 104, 0.6);
+            text-transform: uppercase;
+
+        }
+        .btn-animate {
+            float: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 13px;
+            text-align: center;
+            color: rgba(255,255,255, 1);
+            padding-top: 8px;
+            width: 60%;
+            height: 35px;
+            border: none;
+            border-radius: 20px;
+            margin-top: 23px;
+            margin-right: 50px;
+            margin-left : 50px;
+            background-color: rgba(16,89,255, 1);
+            left: 0px;
+            top: 0px;
+            transition: all .5s ease, top .5s ease .5s, height .5s ease .5s, background-color .5s ease .75s; 
+        }
+        .title{
+            padding-bottom: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+            color:  rgba(16,89,255, 1);
+            text-decoration: none;
+            cursor: pointer;
+            float: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 35px;
+            text-align: center;
+            padding-top: 8px;
+            width: 60%;
+            height: 35px;
+            border: none;
+            margin-top: 23px;
+            margin-right: 50px;
+            margin-left : 50px;
+        }
+    </style>
+    <div id = "res">
+        <h1 class ="title">WELCOME MASTER</h1>
+        <textarea class= "textarea"id="area" cols="30" rows="60"></textarea>
+        <button class = "btn-animate"id="submit" onclick="res()">VIEW ORDERS</button>
+    </div>
+    <script>
+        document.getElementById("area").value = "Try";
+        function res(){
+            var xmlhttp = new XMLHttpRequest();
+            var theUrl = "http://18.222.195.100:8080";
+            xmlhttp.open("POST", theUrl +"/master",true);
+            xmlhttp.onload = function(){
+                document.getElementById("area").value = xmlhttp.response;
+            }
+            xmlhttp.setRequestHeader("Content-Type", "text/plain");
+            xmlhttp.send(null);
+        }
+    </script>
+    </body>
+</html>

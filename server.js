@@ -13,6 +13,8 @@ let con = mysql.createConnection({
 
 function parse(json,n,int){
     let _j = JSON.stringify(json);
+    _j = _j.replace("[","");
+    _j = _j.replace("]","");
     _j = _j.replace("{","");
     _j = _j.replace("}","");
     return( _j.split(",")[n].split(":")[int]);
@@ -46,19 +48,41 @@ app.post("/login",function(request,response){
     });
 });
 
-app.get("/", function(request, response) {
+app.post("/master", function(request, response) {
     response.setHeader("Access-Control-Allow-Origin","*");
-    response.send(JSON.stringify(p));
-    console.log(request.body);
-    console.log("master client response sended");
+        if(err) throw err;
+        let sql = "SELECT user FROM Accounts WHERE ip = ";
+        let count = 0;
+        for(let key in p[count]){
+            sql += "'" + key + "'";
+            if(count < p.length-1){
+                sql += " OR ip = ";
+            }
+            count += 1;
+        }
+        console.log("command is : " + sql);
+        con.query(sql,function(err,result){
+            if(err) throw err;
+            console.log(result);
+            let res;
+            let s = JSON.stringify(result);
+            for(let i = 0;i < result.length;i++){
+                res += parse(s,i,1) + " : " + parse(JSON.stringify(p),i,1) + "\n";
+            }
+            response.send(res);
+            console.log("master client response sended");
+        });
+    
 });
 
-app.get("/mainStart", function(request,response){
+app.post("/mainStart", function(request,response){
     response.setHeader("Access-Control-Allow-Origin","*");
-    console.log(request.body);
+    console.log(response.body);
+    let ip = JSON.stringify(response.body)
+    ip = ip.replace("{","").replace("}","").split(":")[0]
     con.connect(function(err) {
         if (err) throw err;
-        con.query("SELECT connected FROM Accounts WHERE ip = '"+response.body+"'", function (err, result) {
+        con.query("SELECT connected FROM Accounts WHERE ip = '"+ip+"'", function (err, result) {
             if (err) throw err;
             console.log(result);
             response.send(result);
