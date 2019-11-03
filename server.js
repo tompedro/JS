@@ -34,29 +34,26 @@ app.post("/", function(request, response) {
 
 app.post("/login",function(request,response){
     response.setHeader("Access-Control-Allow-Origin","*");
-    con.connect(function(err){
+    console.log("connected to db");
+    let info = [parse(request.body,0,0),parse(request.body,0,1),parse(request.body,1,0),"true"];
+    let sql = "SELECT user,password,ip FROM Accounts WHERE ip ="+info[2]+" AND user = "+info[0]+" AND password = "+info[1];
+    con.query(sql,function(err,result){
         if(err) throw err;
-        console.log("connected to db");
-        let info = [parse(request.body,0,0),parse(request.body,0,1),parse(request.body,1,0),"true"];
-        let sql = "SELECT user,password,ip FROM Accounts WHERE ip ="+info[2]+" AND user = "+info[0]+" AND password = "+info[1];
-        con.query(sql,function(err,result){
-            if(err) throw err;
-            console.log(result);
-            if(result != null){
-                response.send("true");
-                return;
-            }else{
-                let str = info[0] + "," + info[1] + "," + info[2] + "," + info[3];
-                console.log(str);
-                sql = "INSERT INTO Accounts(user,password,ip,connected) VALUES("+str+")";
-                con.query(sql,function(err){
-                    if(err) throw err;
-                    console.log("done");
-                });
-            }
-        });
-
+        console.log(JSON.stringify(result));
+        if(JSON.stringify(result) != []){
+            response.send("true");
+            return;
+        }else{
+            let str = info[0] + "," + info[1] + "," + info[2] + "," + info[3];
+            console.log(str);
+            sql = "INSERT INTO Accounts(user,password,ip,connected) VALUES("+str+")";
+            con.query(sql,function(err){
+                if(err) throw err;
+                console.log("done");
+            });
+        }
     });
+
 });
 
 app.post("/master", function(request, response) {
@@ -91,13 +88,11 @@ app.post("/mainStart", function(request,response){
     console.log(response.body);
     let ip = JSON.stringify(response.body)
     ip = ip.replace("{","").replace("}","").split(":")[0]
-    con.connect(function(err) {
+    if (err) throw err;
+    con.query("SELECT connected FROM Accounts WHERE ip = '"+ip+"'", function (err, result) {
         if (err) throw err;
-        con.query("SELECT connected FROM Accounts WHERE ip = '"+ip+"'", function (err, result) {
-            if (err) throw err;
-            console.log(result);
-            response.send(result);
-        });
+        console.log(result);
+        response.send(result);
     });
     console.log("logged in");
 });
